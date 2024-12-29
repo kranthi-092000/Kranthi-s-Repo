@@ -1,0 +1,53 @@
+package commonutils;
+
+import java.io.IOException;
+
+import org.junit.Test;
+
+import com.cucumber.listener.Reporter;
+import com.testautomationguru.utility.CompareMode;
+import com.testautomationguru.utility.PDFUtil;
+
+import de.redsix.pdfcompare.CompareResultWithPageOverflow;
+import de.redsix.pdfcompare.PdfComparator;
+import junit.framework.Assert;
+
+public class PDF_ValNew {
+	String filePath = System.getProperty("user.dir") + "/TestLogs/LED_MMFA_Prod_checkout";
+	String sa1 = 
+	String sa2 = 
+	
+	PDFUtil pdfutil = new PDFUtil(); 
+	@Test
+	public void pdfCompare() {
+	 try{
+	        boolean pdf_matches = pdfutil.compare(sa1, sa2);
+	        int pageCount1=pdfutil.getPageCount(sa1);
+	        int pageCount2=pdfutil.getPageCount(sa2);
+	        if(pageCount1==pageCount2){
+	            if(pdf_matches) {
+	                System.out.println("Successfully Matched!!");
+	                new PdfComparator(sa1,sa2,new CompareResultWithPageOverflow()).compare().writeTo(filePath);                   
+	                Reporter.addStepLog("PDF comparison is successful");
+	            }
+	            else {
+	                System.out.println("Discrepancies Found!!");
+	                new PdfComparator(sa1,sa2,new CompareResultWithPageOverflow()).compare().writeTo(filePath);                   
+	                Reporter.addStepLog("PDF comparison failed.Discrepancies Found!!");
+	            }
+	        }else{
+
+	        	Reporter.addStepLog("Different number of pages identified. Expected "+pageCount1+"but Found"+pageCount2);
+	        	/*new PdfComparator("expected.pdf", "actual.pdf")
+	        	pdfutil.withIgnore(new PageArea(1, 230, 350, 450, 420))
+	        	pdfutil.withIgnore(new PageArea(2))
+	        	pdfutil.compare(sa1,sa2);*/
+	        }
+
+	    }
+	    catch(Exception e) {
+	        System.out.println(e.getMessage());
+	    }
+	}
+
+}
